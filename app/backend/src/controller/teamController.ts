@@ -7,8 +7,15 @@ class TeamController {
   ) { }
 
   public async getAllTeam(_req: Request, res: Response) {
-    const product = await this.teamsService.teamsGetAll();
-    res.status(200).json(product);
+    const teams = await this.teamsService.teamsGetAll();
+    res.status(200).json(teams);
+  }
+
+  public async getByIdTeam(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const team = await this.teamsService.getTeamById(id as unknown as number);
+    res.status(200).json(team);
   }
 }
 

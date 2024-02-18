@@ -8,13 +8,13 @@ import {
 import db from '.';
 // import OtherModel from './OtherModel';
 
-class Team extends Model<InferAttributes<Team>,
-InferCreationAttributes<Team>> {
+class TeamModel extends Model<InferAttributes<TeamModel>,
+InferCreationAttributes<TeamModel>> {
   declare id: CreationOptional<number>;
   declare teamName: CreationOptional<string>;
 }
 
-Team.init({
+TeamModel.init({
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -27,8 +27,9 @@ Team.init({
   },
 }, {
   sequelize: db,
+  tableName: 'teams',
   timestamps: false,
   underscored: true,
 });
 
-export default Team;
+export default TeamModel;

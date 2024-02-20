@@ -6,7 +6,12 @@ const userController = new UserController();
 
 const router = Router();
 
-router.post('/', validationLogin.validateLogin, userController.login);
-
+router.post(
+  '/',
+  validationLogin.validateLogin,
+  (req: Request, res: Response) => {
+    userController.login(req, res);
+  },
+);
 
 export default router;

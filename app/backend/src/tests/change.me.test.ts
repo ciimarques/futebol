@@ -1,5 +1,6 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
+import * as bcrypt from 'bcryptjs';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
@@ -9,6 +10,7 @@ import UsersModel from '../database/models/UsersModel';
 
 import { Response } from 'superagent';
 import Team from '../Interfaces/Team';
+import UserService from '../service/user.service';
 
 chai.use(chaiHttp);
 
@@ -21,7 +23,7 @@ describe('Seu teste', () => {
 
    let chaiHttpResponse: Response;
 
-  //  before(async () => {
+  // before(async () => {
   //    sinon
   //      .stub(Team, "findOne")
   //      .resolves({} as Team);
@@ -54,25 +56,30 @@ describe('Seu teste', () => {
     expect(response.body).to.deep.equal(times);
  });
 
- it('deve retornar o token', async function () {
-  const user =
+ it.only('deve retornar o token', async function () {
+  process.env.JWT_SECRET = 'your_test_secret';
+
+  const userCredentials =
    {
-    username: 'Admin',
-    role: 'admin',
     email: 'admin@admin.com',
-    password: '$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW',
+    password: 'loopyy',
    };
    
+   const user = {
+    id: 1,
+    password:  bcrypt.hashSync(userCredentials.password),
+   }
   
    sinon.stub(UsersModel, 'findOne').resolves({ dataValues: user } as any);
    const response =  chaiHttpResponse = await chai
-       .request(app)
-       .get('/login')
   
-  //  const token = await userService.login(user.username, '$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW');
-
-  //  expect(token).to.be.not.undefined
-      expect(response.status).to.be.equal(200);   
+       .request(app)
+       .post('/login')
+       .send(userCredentials)
+  console.log(response.body);
+  
+    expect(response.status).to.be.equal(200);   
+    expect(response.body.token).to.be.not.undefined
  })
 });
 

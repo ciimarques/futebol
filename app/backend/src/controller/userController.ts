@@ -17,6 +17,10 @@ class UserController {
       res.status(401).json({ message });
     }
   }
+
+  public static async getRole(req: Request, _res: Response) {
+    return req.body.user.role;
+  }
 }
 
 export default UserController;

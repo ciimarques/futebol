@@ -19,7 +19,7 @@ class UserService {
       {
         id: user.dataValues.id,
         email,
-        password,
+        role: user.dataValues.role,
       },
       process.env.JWT_SECRET as string,
     );

@@ -130,6 +130,18 @@ describe('Seu teste', () => {
         expect(response.status).to.be.equal(401);   
         expect(response.body.message).to.equal('Invalid email or password');
       })
-  
+      it('deve responder com status 401, quando não existir token', async function () {
+       
+        
+         const response =  chaiHttpResponse = await chai
+        
+             .request(app)
+             .get('/login/role')
+             
+        
+          expect(response.status).to.be.equal(401);   
+          expect(response.body.message).to.equal('Token not found');
+        })
+      
   });
 

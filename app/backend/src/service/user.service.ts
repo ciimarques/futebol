@@ -9,7 +9,7 @@ class UserService {
 
   public async userLogin(email: string, password: string): Promise<string> {
     const user = await this.usersModel.findOne({ where: { email } });
-    if (!user) throw new Error('Username or password invalid');
+    if (!user) throw new Error('Invalid email or password');
     const match = await bcrypt.compare(password, user.dataValues.password);
     if (!match) {
       throw new Error('Invalid email or password');

@@ -7,7 +7,7 @@ function ValidateEmail(email: string, res: Response) {
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({ message: 'O campo deve receber um email válido ex:"tfc@projeto.com"' });
+    res.status(401).json({ message: 'Invalid email or password' });
     return false;
   }
   return true;
@@ -19,7 +19,7 @@ function ValidatePassword(password: string, res: Response) {
     return false;
   }
   if (password.length < 6) {
-    res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    res.status(401).json({ message: 'Invalid email or password' });
     return false;
   }
   return true;

@@ -10,7 +10,7 @@ import UsersModel from '../database/models/UsersModel';
 
 import { Response } from 'superagent';
 import Team from '../Interfaces/Team';
-import UserService from '../service/user.service';
+
 
 chai.use(chaiHttp);
 
@@ -29,9 +29,9 @@ describe('Seu teste', () => {
   //      .resolves({} as Team);
   //  });
 
-  //  after(()=>{
-  //    (Team.findOne as sinon.SinonStub).restore();
-  //   })
+  afterEach(function () {
+    sinon.restore();
+  });
 
   it('Retorna a lista completa de times!', async () => {
     const times: Team[] = 
@@ -56,7 +56,7 @@ describe('Seu teste', () => {
     expect(response.body).to.deep.equal(times);
  });
 
- it.only('deve retornar o token', async function () {
+ it('deve retornar o token', async function () {
   process.env.JWT_SECRET = 'your_test_secret';
 
   const userCredentials =
@@ -76,10 +76,60 @@ describe('Seu teste', () => {
        .request(app)
        .post('/login')
        .send(userCredentials)
-  console.log(response.body);
   
     expect(response.status).to.be.equal(200);   
     expect(response.body.token).to.be.not.undefined
  })
-});
+ it('deve responder com status 401, quando não existir usuário com email', async function () {
+  const userCredentials =
+   {
+    email: 'admin@admin.com',
+    password: 'loopyy',
+   };
+   
+   sinon.stub(UsersModel, 'findOne').resolves(undefined);
+   const response =  chaiHttpResponse = await chai
+  
+       .request(app)
+       .post('/login')
+       .send(userCredentials)
+  
+    expect(response.status).to.be.equal(401);   
+    expect(response.body.message).to.equal('Invalid email or password');
+  })
+
+  it('deve responder com status 401, quando existir usuário com email inválido', async function () {
+    const userCredentials =
+     {
+      email: 'admin@.com',
+      password: 'loopyy',
+     };
+     
+     const response =  chaiHttpResponse = await chai
+    
+         .request(app)
+         .post('/login')
+         .send(userCredentials)
+    
+      expect(response.status).to.be.equal(401);   
+      expect(response.body.message).to.equal('Invalid email or password');
+    })
+    it('deve responder com status 401, quando existir usuário com password invalido', async function () {
+      const userCredentials =
+       {
+        email: 'admin@admin.com',
+        password: 'loopy',
+       };
+       
+       const response =  chaiHttpResponse = await chai
+      
+           .request(app)
+           .post('/login')
+           .send(userCredentials)
+      
+        expect(response.status).to.be.equal(401);   
+        expect(response.body.message).to.equal('Invalid email or password');
+      })
+  
+  });
 

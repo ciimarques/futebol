@@ -18,7 +18,7 @@ class UserController {
     }
   }
 
-  public static async getRole(req: Request, _res: Response) {
+  public async getRole(req: Request, _res: Response) {
     return req.body.user.role;
   }
 }

@@ -18,7 +18,7 @@ router.get(
   '/role',
   validationToken.validateToken,
   (req: Request, res: Response) => {
-    userController.getRole(req, res);
+    UserController.getRole(req, res);
   },
 );
 

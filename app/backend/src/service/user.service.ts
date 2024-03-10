@@ -14,14 +14,13 @@ class UserService {
     if (!match) {
       throw new Error('Invalid email or password');
     }
-
     const token = jwt.sign(
       {
         id: user.dataValues.id,
         email,
         role: user.dataValues.role,
       },
-      process.env.JWT_SECRET as string,
+      'secret',
     );
     return token;
   }

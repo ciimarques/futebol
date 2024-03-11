@@ -3,23 +3,17 @@ import Match from '../Interfaces/Match';
 import MatchesModel from '../database/models/MatchesModel';
 
 class MatchService {
-  constructor(
-    private matches = MatchesModel,
-  ) { }
-
-  public async getMatches(): Promise<Match[]> {
-    const matches: Match[] = await this.matches.findAll({
+  constructor(private matchModel = MatchesModel) {}
+  public async getMatches(inProgress?: string): Promise<Match[]> {
+    let whereCondition = {};
+    if (inProgress !== undefined) {
+      whereCondition = { inProgress: inProgress === 'true' };
+    }
+    const matches: Match[] = await this.matchModel.findAll({
+      where: whereCondition,
       include: [
-        {
-          model: TeamModel,
-          as: 'homeTeam',
-          attributes: ['teamName'],
-        },
-        {
-          model: TeamModel,
-          as: 'awayTeam',
-          attributes: ['teamName'],
-        },
+        { model: TeamModel, as: 'homeTeam', attributes: ['teamName'] },
+        { model: TeamModel, as: 'awayTeam', attributes: ['teamName'] },
       ],
     });
     return matches;

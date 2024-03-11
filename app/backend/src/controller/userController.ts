@@ -18,8 +18,8 @@ class UserController {
     }
   }
 
-  public static async getRole(req: Request, _res: Response) {
-    return req.body.user.role;
+  public static getRole(req: Request, res: Response) {
+    return res.status(200).json({ role: req.body.user.role });
   }
 }
 

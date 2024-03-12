@@ -44,6 +44,20 @@ class MatchService {
 
     await match.update({ homeTeamGoals, awayTeamGoals });
   }
+
+  public async createMatch(matchData: {
+    homeTeamId: number,
+    awayTeamId: number,
+    homeTeamGoals: number,
+    awayTeamGoals: number,
+  }): Promise<Match> {
+    const newMatch = await this.matchModel.create({
+      ...matchData,
+      inProgress: true,
+    });
+
+    return newMatch;
+  }
 }
 
 export default MatchService;

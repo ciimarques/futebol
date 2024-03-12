@@ -26,10 +26,23 @@ class MatchService {
       return false;
     }
     if (!match.inProgress) {
-      return false;
+      throw new Error('Match is not in progress');
     }
     await match.update({ inProgress: false });
     return true;
+  }
+
+  public async updateMatchResult(
+    id: number,
+    homeTeamGoals: number,
+    awayTeamGoals: number,
+  ): Promise<void> {
+    const match = await this.matchModel.findByPk(id);
+    if (!match) {
+      throw new Error('Match not found');
+    }
+
+    await match.update({ homeTeamGoals, awayTeamGoals });
   }
 }
 

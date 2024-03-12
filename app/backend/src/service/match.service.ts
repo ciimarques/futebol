@@ -4,6 +4,7 @@ import MatchesModel from '../database/models/MatchesModel';
 
 class MatchService {
   constructor(private matchModel = MatchesModel) {}
+
   public async getMatches(inProgress?: string): Promise<Match[]> {
     let whereCondition = {};
     if (inProgress !== undefined) {
@@ -17,6 +18,18 @@ class MatchService {
       ],
     });
     return matches;
+  }
+
+  public async finishMatchById(id: number): Promise<boolean> {
+    const match = await this.matchModel.findByPk(id);
+    if (!match) {
+      return false;
+    }
+    if (!match.inProgress) {
+      return false;
+    }
+    await match.update({ inProgress: false });
+    return true;
   }
 }
 

@@ -10,6 +10,7 @@ import UsersModel from '../database/models/UsersModel';
 
 import { Response } from 'superagent';
 import Team from '../Interfaces/Team';
+import MatchesModel from '../database/models/MatchesModel';
 
 
 chai.use(chaiHttp);
@@ -142,6 +143,41 @@ describe('Seu teste', () => {
           expect(response.status).to.be.equal(401);   
           expect(response.body.message).to.equal('Token not found');
         })
+      
+      it('deve retornar uma lista de partidas', async function () {
+        const matches = [
+          {
+            id: 1,
+            homeTeam: {
+              teamName: 'Avaí/Kindermann',
+            },
+            awayTeam: {
+              teamName: 'Bahia',
+            },
+            homeTeamGoals: 1,
+            awayTeamGoals: 1,
+            inProgress: false,
+          },
+          {
+            id: 2,
+            homeTeam: {
+              teamName: 'Botafogo',
+            },
+            awayTeam: {
+              teamName: 'Corinthians',
+            },
+            homeTeamGoals: 1,
+            awayTeamGoals: 1,
+            inProgress: false,
+          },
+        ];
+        sinon.stub(MatchesModel, 'findAll').resolves(matches as any);
+        const response =  chaiHttpResponse = await chai
+          .request(app)
+          .get('/matches')
+        expect(response.status).to.be.equal(200);
+        expect(response.body).to.deep.equal(matches);
+      })
       
   });
 

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import MatchService from '../service/match.service';
+import TeamModel from '../database/models/TeamsModel';
 
 class MatchController {
   constructor(private matchService = new MatchService()) {}
@@ -39,15 +40,40 @@ class MatchController {
     }
   }
 
+  private static async validateTeams(homeTeamId: number, awayTeamId: number): Promise<void> {
+    if (homeTeamId === awayTeamId) {
+      throw new Error('It is not possible to create a match with two equal teams');
+    }
+
+    const homeTeamExists = await TeamModel.findByPk(homeTeamId);
+    const awayTeamExists = await TeamModel.findByPk(awayTeamId);
+
+    if (!homeTeamExists || !awayTeamExists) {
+      throw new Error('There is no team with such id!');
+    }
+  }
+
   public async createMatch(req: Request, res: Response) {
     const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = req.body;
-    const newMatch = await this.matchService.createMatch({
-      homeTeamId,
-      awayTeamId,
-      homeTeamGoals,
-      awayTeamGoals,
-    });
-    res.status(201).json(newMatch);
+
+    try {
+      await MatchController.validateTeams(homeTeamId, awayTeamId);
+
+      const newMatch = await this.matchService.createMatch({
+        homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals,
+      });
+
+      res.status(201).json(newMatch);
+    } catch (error) {
+      const errorMessage = (error as { message: string }).message;
+      if (errorMessage === 'It is not possible to create a match with two equal teams') {
+        return res.status(422).json({ message: errorMessage });
+      }
+      if (errorMessage === 'There is no team with such id!') {
+        return res.status(404).json({ message: errorMessage });
+      }
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 }
 

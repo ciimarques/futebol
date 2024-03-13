@@ -5,12 +5,12 @@ import MatchesModel from '../database/models/MatchesModel';
 class MatchService {
   constructor(private matchModel = MatchesModel) {}
 
-  public async getMatches(inProgress?: string): Promise<Match[]> {
+  public async getMatches(inProgress?: string) {
     let whereCondition = {};
     if (inProgress !== undefined) {
       whereCondition = { inProgress: inProgress === 'true' };
     }
-    const matches: Match[] = await this.matchModel.findAll({
+    const matches = await this.matchModel.findAll({
       where: whereCondition,
       include: [
         { model: TeamModel, as: 'homeTeam', attributes: ['teamName'] },

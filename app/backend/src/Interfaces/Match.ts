@@ -1,3 +1,5 @@
+import Team from './Team';
+
 export default interface Match {
   id: number,
   homeTeamId: number,
@@ -5,4 +7,5 @@ export default interface Match {
   awayTeamId: number,
   awayTeamGoals: number,
   inProgress: boolean,
+  homeTeam?: Team,
 }

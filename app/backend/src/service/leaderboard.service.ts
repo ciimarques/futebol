@@ -24,7 +24,7 @@ class LeaderboardService {
   }
 
   private static mapMatchesToLeaderboard(matches: Match[]): LeaderboardItem[] {
-    return matches.reduce<LeaderboardItem[]>((acc, match) => {
+    const leaderboard = matches.reduce<LeaderboardItem[]>((acc, match) => {
       let leaderboardItem = acc.find((team) => team.name === match.homeTeam!.teamName);
 
       if (!leaderboardItem) {
@@ -33,11 +33,17 @@ class LeaderboardService {
       }
 
       leaderboardItem = LeaderboardService.updateLeaderboardItem(leaderboardItem, match);
-      const updatedAcc = acc.map((item) => (
-        item.name === leaderboardItem!.name ? leaderboardItem! : item
-      ));
-      return updatedAcc;
+      return acc.map((item) => (
+        item.name === leaderboardItem!.name ? leaderboardItem : item)) as LeaderboardItem[];
     }, []);
+
+    return leaderboard.sort((a, b) => {
+      if (a.totalPoints !== b.totalPoints) return b.totalPoints - a.totalPoints;
+      if (a.totalVictories !== b.totalVictories) return b.totalVictories - a.totalVictories;
+      if (a.goalsBalance !== b.goalsBalance) return b.goalsBalance - a.goalsBalance;
+      if (a.goalsFavor !== b.goalsFavor) return b.goalsFavor - a.goalsFavor;
+      return b.goalsOwn - a.goalsOwn;
+    });
   }
 
   private static initializeLeaderboardItem(teamName: string): LeaderboardItem {
@@ -50,26 +56,36 @@ class LeaderboardService {
       totalLosses: 0,
       goalsFavor: 0,
       goalsOwn: 0,
+      goalsBalance: 0,
+      efficiency: '0.00',
     };
   }
 
   private static updateLeaderboardItem(item: LeaderboardItem, match: Match) {
     const updatedItem = { ...item };
-
-    if (match.homeTeamGoals > match.awayTeamGoals) {
-      updatedItem.totalPoints += 3;
-    } else if (match.homeTeamGoals === match.awayTeamGoals) {
-      updatedItem.totalPoints += 1;
-    }
-
     updatedItem.totalGames += 1;
-    updatedItem.totalVictories += match.homeTeamGoals > match.awayTeamGoals ? 1 : 0;
-    updatedItem.totalDraws += match.homeTeamGoals === match.awayTeamGoals ? 1 : 0;
-    updatedItem.totalLosses += match.homeTeamGoals < match.awayTeamGoals ? 1 : 0;
     updatedItem.goalsFavor += match.homeTeamGoals;
     updatedItem.goalsOwn += match.awayTeamGoals;
-
+    updatedItem.goalsBalance = updatedItem.goalsFavor - updatedItem.goalsOwn;
+    if (match.homeTeamGoals > match.awayTeamGoals) {
+      updatedItem.totalPoints += 3;
+      updatedItem.totalVictories += 1;
+    } else if (match.homeTeamGoals === match.awayTeamGoals) {
+      updatedItem.totalPoints += 1;
+      updatedItem.totalDraws += 1;
+    } else {
+      updatedItem.totalLosses += 1;
+    }
     return updatedItem;
   }
+
+  private static calculateEfficiency(totalPoints: number, totalGames: number): string {
+    if (totalGames > 0) {
+      const efficiency = (totalPoints / (totalGames * 3)) * 100;
+      return efficiency.toFixed(2);
+    }
+    return '0.00';
+  }
 }
+
 export default LeaderboardService;

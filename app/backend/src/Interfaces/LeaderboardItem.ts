@@ -7,4 +7,6 @@ export default interface LeaderbordItem {
   totalLosses: number;
   goalsFavor: number;
   goalsOwn: number;
+  goalsBalance: number;
+  efficiency: string;
 }

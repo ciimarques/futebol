@@ -11,6 +11,8 @@ import UsersModel from '../database/models/UsersModel';
 import { Response } from 'superagent';
 import Team from '../Interfaces/Team';
 import MatchesModel from '../database/models/MatchesModel';
+import leaderboardService from '../service/leaderboard.service';
+import LeaderboardService from '../service/leaderboard.service';
 
 
 chai.use(chaiHttp);
@@ -178,6 +180,5 @@ describe('Seu teste', () => {
         expect(response.status).to.be.equal(200);
         expect(response.body).to.deep.equal(matches);
       })
-      
   });
 

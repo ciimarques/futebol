@@ -8,4 +8,5 @@ export default interface Match {
   awayTeamGoals: number,
   inProgress: boolean,
   homeTeam?: Team,
+  awayTeam?: Team,
 }

@@ -1,16 +1,17 @@
 import { Request, Response } from 'express';
-import LeaderboardService from '../service/leaderboard.service';
+import LeaderboardHomeService from '../service/leaderboardHome.service';
 
-class LeaderboardController {
-  constructor(private leaderboardService = new LeaderboardService()) {}
+class LeaderboardHomeController {
+  constructor(private leaderboardHomeService = new LeaderboardHomeService()) {}
   public async getHomeLeaderboard(req: Request, res: Response) {
     try {
-      const leaderboard = await this.leaderboardService.getLeaderboardHome();
+      const leaderboard = await this.leaderboardHomeService.getLeaderboardHome();
       res.status(200).json(leaderboard);
     } catch (error) {
+      console.error('Error: ', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   }
 }
 
-export default LeaderboardController;
+export default LeaderboardHomeController;

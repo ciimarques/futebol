@@ -1,15 +1,15 @@
 import { Request, Response, Router } from 'express';
-import LeaderboardController from '../controller/leaderboardController';
+import LeaderboardHomeController from '../controller/leaderboardController';
 import LeaderboardAwayController from '../controller/leaderboardAwayController';
 
-const leaderboardController = new LeaderboardController();
+const leaderboardHomeController = new LeaderboardHomeController();
 const leaderboardAwayController = new LeaderboardAwayController();
 
 const router = Router();
 
 router.get(
   '/home',
-  (req: Request, res: Response) => leaderboardController.getHomeLeaderboard(req, res),
+  (req: Request, res: Response) => leaderboardHomeController.getHomeLeaderboard(req, res),
 );
 router.get(
   '/away',

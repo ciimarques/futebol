@@ -3,7 +3,7 @@ import Match from '../Interfaces/Match';
 import MatchesModel from '../database/models/MatchesModel';
 import TeamModel from '../database/models/TeamsModel';
 
-class LeaderboardService {
+class LeaderboardHomeService {
   constructor(private matchModel = MatchesModel) {}
 
   private async getAllFinishedMatches() {
@@ -20,7 +20,7 @@ class LeaderboardService {
     const matchesModels = await this.getAllFinishedMatches();
     const matches = matchesModels.map((matchModel) => matchModel.dataValues as Match);
 
-    return LeaderboardService.mapMatchesToLeaderboard(matches);
+    return LeaderboardHomeService.mapMatchesToLeaderboard(matches);
   }
 
   private static mapMatchesToLeaderboard(matches: Match[]): LeaderboardItem[] {
@@ -28,11 +28,12 @@ class LeaderboardService {
       let leaderboardItem = acc.find((team) => team.name === match.homeTeam!.teamName);
 
       if (!leaderboardItem) {
-        leaderboardItem = LeaderboardService.initializeLeaderboardItem(match.homeTeam!.teamName);
+        leaderboardItem = LeaderboardHomeService
+          .initializeLeaderboardItem(match.homeTeam!.teamName);
         acc.push(leaderboardItem);
       }
 
-      leaderboardItem = LeaderboardService.updateLeaderboardItem(leaderboardItem, match);
+      leaderboardItem = LeaderboardHomeService.updateLeaderboardItem(leaderboardItem, match);
       return acc.map((item) => (
         item.name === leaderboardItem!.name ? leaderboardItem : item)) as LeaderboardItem[];
     }, []);
@@ -76,12 +77,12 @@ class LeaderboardService {
     } else {
       updatedItem.totalLosses += 1;
     }
-    return LeaderboardService.updateEfficiency(updatedItem);
+    return LeaderboardHomeService.updateEfficiency(updatedItem);
   }
 
   private static updateEfficiency(item: LeaderboardItem): LeaderboardItem {
     const updatedItem = { ...item };
-    updatedItem.efficiency = LeaderboardService.calculateEfficiency(
+    updatedItem.efficiency = LeaderboardHomeService.calculateEfficiency(
       updatedItem.totalPoints,
       updatedItem.totalGames,
     );
@@ -97,4 +98,4 @@ class LeaderboardService {
   }
 }
 
-export default LeaderboardService;
+export default LeaderboardHomeService;
